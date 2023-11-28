@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{/layout.html}">
+
+<head>
+    <title>New Expense</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pangolin">
+    <link rel="stylesheet" href="/html/css/normalize.css">
+    <link rel="stylesheet" href="/html/css/main.css">
+</head>
+<body>
+
+<div id="containers" layout:fragment="contents">
+<h1>New Expense</h1>
+
+
+<form action="/save-expense" method="post">
+    <!-- Description -->
+    <div>
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required>
+    </div>
+
+    <!-- Date -->
+    <div>
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" min="2023" required>
+    </div>
+
+    <!-- Amount -->
+    <div>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" step="0.01" required>
+    </div>
+
+    <div>
+        <input type="submit" value="Save Expense">
+    </div>
+    <script>
+        // Get the date input element by its ID
+        var dateInput = document.getElementById("date");
+
+        // Get today's date in yyyy-mm-dd format
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, "0");
+        var mm = String(today.getMonth() + 1).padStart(2, "0"); // January is 0!
+        var yyyy = today.getFullYear();
+
+        var minDate = yyyy + "-" + mm + "-" + dd;
+
+        // Set the minimum date attribute to today's date
+        dateInput.max = minDate;
+    </script>
+
+</form>
+</div>
+</body>
+</html>

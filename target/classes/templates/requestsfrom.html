@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RequestsDetails</title>
+    <link href="/html/css/normalize.css">
+</head>
+<body>
+<div id="containers" layout:fragment="contents">
+    <div>
+        <p id="exId" style="visibility: hidden"></p>
+        <h1>Submit a payment request for the following expense</h1>
+        <div style="display: flex">
+            <div>
+                <p>Date</p>
+                <p>Description</p>
+                <p>Amount</p>
+            </div>
+            <div style="padding-left: 50%">
+                <p id="expense_date" th:text="${expense.date}">2023/10/12</p>
+                <p id="expense_description" th:text="${expense.description}">Lunch</p>
+                <p id="expense_amount" th:text="${expense.amount}">R0,00</p>
+            </div>
+        </div>
+        <div th:if="${#lists.size(requests) != 0}">
+            <h1>Previous Payment Requests for this expense</h1>
+            <table>
+                <tr>
+                    <th>Who</th>
+                    <th>Due</th>
+                    <th>Paid?</th>
+                    <th>How Much</th>
+                </tr>
+                <tr th:each="request : ${requests}">
+                    <td th:id="${#strings.concat('paymentrequest_who_', request.id)}" th:text="${request.personWhoShouldPayBack.getName}"></td>
+                    <td th:id="${#strings.concat('paymentrequest_date_', request.id)}" th:text="${request.getDueDate}"></td>
+                    <td>
+                        <span th:id="${#strings.concat('paymentrequest_paid_', request.id)}" th:if="${request.isPaid}">Yes</span>
+                        <span th:id="${#strings.concat('paymentrequest_paid_', request.id)}" th:unless="${request.isPaid}">No</span>
+                    </td>
+                    <td th:id="${#strings.concat('paymentrequest_amount_', request.id)}" th:text="${request.getAmountToPay}"></td>
+                </tr>
+                <tr style="border-top: 2px solid grey">
+                    <td colspan="3">Total Amount of Payments Requested</td>
+                    <td id="grand_total" th:text="${total}" style="border-radius: 2cm; animation: glow 2s infinite alternate"></td>
+                </tr>
+            </table>
+        </div>
+        <form style="align-self: center" action="/paymentrequest.action" method="post">
+            <div>
+                <label for="email">The email address of the person who should pay</label>
+                <input type="text" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="due_date">By when must this claim be settled</label>
+                <input type="date" id="due_date" name="due_date" min="2023" required>
+            </div>
+            <div>
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" step="10" placeholder="Example" required>
+            </div>
+            <div>
+                <input type="submit" value="Submit">
+            </div>
+            <script>
+                var dateInput = document.getElementById("due_date");
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, "0");
+                var mm = String(today.getMonth() + 1).padStart(2, "0");
+                var yyyy = today.getFullYear();
+                var minDate = yyyy + "-" + mm + "-" + dd;
+                dateInput.min = minDate;
+            </script>
+        </form>
+    </div>
+</div>
+</body>
+</html>

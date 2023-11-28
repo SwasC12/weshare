@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{/layout.html}">
+
+<head>
+    <link href="/html/css/normalize.css">
+    <link href="/html/css/main.css">
+</head>
+
+<body>
+    <div id="containers" layout:fragment="contents" style="margin-left: 10%">
+        <section class="expenseList">
+            <h2>People that you owe</h2>
+            <p id="no_payment_requests_received" th:if="${#lists.isEmpty(expenses)}">You don't owe anyone anything!</p>
+            <div th:if="${#lists.size(requests) != 0}">
+                <table>
+                    <tr style="background-color: blue; border-radius: 2cm">
+                        <th>Who</th>
+                        <th>What</th>
+                        <th>Due in (days)</th>
+                        <th>How Much</th>
+                        <th style="visibility: hidden"> . .</th>
+                    </tr>
+                    <tr class="expensetable" th:each="request : ${requests}">
+                        <td th:text="${request.personWhoShouldPayBack.getName}"></td>
+                        <td><a th:text="${request.getDescription}" href="#"></a></td>
+                        <td th:text="${request.daysLeftToPay}"></td>
+                        <td th:text="${request.getAmountToPay}" style="color: blue"></td>
+                        <td style="border: none; margin: 0">
+                            <form style="border: none; padding: 0; width: 0; border-radius: 0; background-color: grey"
+                                action="/paymentrequests_received.action" method="post">
+                                <input type="hidden" name="hidden" id="hidden" th:value="${request.id}">
+                                <input th:id="paid_1" th:unless="${request.isPaid}" type="submit" style="background-color: #4CAF50; outline: none 0"
+                                    value="pay">
+                                <span th:id="paid_1" th:if="${request.isPaid}"
+                                    style="background-color: #4CAF50; border-radius: 0.5cm; height: 5px; width: 5px; box-shadow: 0 0 20px blue">Paid</span>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 2px solid grey">
+                        <td colspan="3" style="text-align: start">Total Unpaid:</td>
+                        <td id="grand_total" th:text="${total}" style="color: green"></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>
